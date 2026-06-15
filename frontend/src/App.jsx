@@ -166,6 +166,11 @@ function App() {
   }, [cart, productMap])
 
   const orderHistory = customerSession?.orders || []
+  const orderHistoryCount = orderHistory.length
+  const orderHistoryItemCount = orderHistory.reduce(
+    (count, order) => count + (order.item_count ?? order.items?.length ?? 0),
+    0,
+  )
 
   const cartCount = cartItems.reduce((acc, item) => acc + item.quantity, 0)
   const cartTotal = cartItems.reduce((acc, item) => acc + item.price * item.quantity, 0)
@@ -390,7 +395,7 @@ function App() {
                 <strong>{currentCustomer.name}</strong>
                 <span>{currentCustomer.email}</span>
                 <small>
-                  Sesiones: {currentCustomer.login_count ?? 0} | Último acceso:{' '}
+                  Sesiones: {currentCustomer.login_count ?? 0} | Órdenes: {orderHistoryCount} | Último acceso:{' '}
                   {currentCustomer.last_login_at
                     ? new Date(currentCustomer.last_login_at).toLocaleString('es-BO')
                     : 'primera vez'}
@@ -466,28 +471,39 @@ function App() {
 
         {currentCustomer && (
           <section className="history-block" aria-label="Historial de compras">
-            <h2>Historial de compras</h2>
-            {orderHistory.length === 0 ? (
-              <p>No hay compras registradas todavía.</p>
-            ) : (
-              orderHistory.map((order) => (
-                <article key={order.id} className="history-item">
-                  <div className="history-head">
-                    <strong>{new Date(order.created_at).toLocaleString('es-BO')}</strong>
-                    <span>{order.status}</span>
-                  </div>
-                  <div className="history-meta">
-                    <span>Items: {order.item_count}</span>
-                    <span>Total: {formatCurrency(order.total || 0)}</span>
-                  </div>
-                  <ul>
-                    {order.items.map((item) => (
-                      <li key={`${order.id}-${item.id || item.product_id}`}>{item.product_name} x {item.quantity}</li>
-                    ))}
-                  </ul>
-                </article>
-              ))
-            )}
+            <div className="history-summary">
+              <div>
+                <h2>Historial de compras</h2>
+                <p>
+                  {orderHistoryCount} orden(es) realizadas · {orderHistoryItemCount} item(s) en total
+                </p>
+              </div>
+            </div>
+            <div className="history-list">
+              {orderHistory.length === 0 ? (
+                <p>No hay compras registradas todavía.</p>
+              ) : (
+                orderHistory.map((order) => (
+                  <article key={order.id} className="history-item">
+                    <div className="history-head">
+                      <strong>{new Date(order.created_at).toLocaleString('es-BO')}</strong>
+                      <span>{order.status}</span>
+                    </div>
+                    <div className="history-meta">
+                      <span>Items: {order.item_count}</span>
+                      <span>Total: {formatCurrency(order.total || 0)}</span>
+                    </div>
+                    <ul>
+                      {order.items.map((item) => (
+                        <li key={`${order.id}-${item.id || item.product_id}`}>
+                          {item.product_name} x {item.quantity}
+                        </li>
+                      ))}
+                    </ul>
+                  </article>
+                ))
+              )}
+            </div>
           </section>
         )}
       </main>
