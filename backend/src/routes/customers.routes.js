@@ -2,8 +2,7 @@ const express = require('express')
 const { pool } = require('../config/pg')
 const cryptoUtil = require('../utils/crypto')
 const { v4: uuidv4 } = require('uuid')
-const Cart = require('../models/Cart')
-const Preference = require('../models/Preference')
+const { getCustomerById, getCustomerFullProfile } = require('../services/customerService')
 
 const router = express.Router()
 
@@ -25,9 +24,8 @@ router.post('/', async (req, res, next) => {
 router.get('/:id', async (req, res, next) => {
   const { id } = req.params
   try {
-    const { rows } = await pool.query('SELECT id, name, email, encrypted_card, created_at FROM customers WHERE id = $1', [id])
-    if (!rows.length) return res.status(404).json({ message: 'Customer not found' })
-    const customer = rows[0]
+    const customer = await getCustomerById(id)
+    if (!customer) return res.status(404).json({ message: 'Customer not found' })
     // Do not return decrypted card by default
     delete customer.encrypted_card
     return res.json(customer)
@@ -40,13 +38,9 @@ router.get('/:id', async (req, res, next) => {
 router.get('/:id/full', async (req, res, next) => {
   const { id } = req.params
   try {
-    const { rows } = await pool.query('SELECT id, name, email, created_at FROM customers WHERE id = $1', [id])
-    if (!rows.length) return res.status(404).json({ message: 'Customer not found' })
-    const customer = rows[0]
-
-    const [cart, prefs] = await Promise.all([Cart.findOne({ customerId: id }), Preference.findOne({ customerId: id })])
-
-    return res.json({ customer, cart: cart || null, preferences: prefs || null })
+    const profile = await getCustomerFullProfile(id)
+    if (!profile) return res.status(404).json({ message: 'Customer not found' })
+    return res.json(profile)
   } catch (error) {
     return next(error)
   }

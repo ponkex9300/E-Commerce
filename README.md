@@ -46,8 +46,11 @@ Verifica PostgreSQL con la inicialización en `backend/db/init.sql`.
 
 ```bash
 POST /api/customers
+POST /api/auth/login
 GET /api/customers/:id
 GET /api/customers/:id/full
+GET /api/orders/:customerId
+POST /api/orders/checkout
 ```
 
 Qué validar:
@@ -55,6 +58,8 @@ Qué validar:
 - que el cliente se crea con un UUID
 - que el correo queda en PostgreSQL
 - que `encrypted_card` existe y se guarda cifrado
+- que `POST /api/auth/login` crea el usuario solo si el email no existe y reutiliza el mismo registro si ya estaba
+- que `orders` y `order_items` guardan el historial de compra con detalle de productos
 - que `GET /api/customers/:id/full` junta cliente de PostgreSQL con preferencias y carrito de MongoDB
 
 También puedes revisar el esquema en PostgreSQL y confirmar tablas como `roles`, `customers`, `orders` y `order_items`.
@@ -71,6 +76,7 @@ GET /api/reports/price-summary
 Qué validar:
 
 - que los productos tienen campos flexibles en `attributes`
+- que cada producto tiene `stock`
 - que existen arreglos en `tags` y `variants`
 - que la búsqueda acepta operadores como `$gt`, `$lt`, `$and` y `$or`
 - que los reportes comparan marcas y agregan precios
@@ -78,8 +84,10 @@ Qué validar:
 ### Integración entre bases
 
 ```bash
+POST /api/auth/login
 POST /api/preferences/:customerId
 POST /api/cart/:customerId
+POST /api/orders/checkout
 GET /api/customers/:id/full
 ```
 
@@ -87,6 +95,7 @@ Qué validar:
 
 - que `customerId` conecta PostgreSQL con MongoDB
 - que preferencias y carrito se guardan en MongoDB
+- que el checkout descuenta stock y registra el pedido en PostgreSQL
 - que la vista completa devuelve un documento integrado
 
 ## Ejemplo rápido de prueba

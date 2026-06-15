@@ -83,10 +83,22 @@ function buildAttributes(category) {
   return { uso: 'entrenamiento' }
 }
 
+function buildStock(category, index) {
+  const baseStock = {
+    footwear: 18,
+    equipment: 24,
+    apparel: 30,
+    training: 36,
+  }
+
+  return baseStock[category] + ((index % 5) * 3)
+}
+
 const products = assets.map((asset, index) => {
   const name = toSpanishName(asset.file, asset.category)
   const brand = getBrand(asset.file)
   const price = Number((BASE_PRICE[asset.category] + (index % 7) * 8.5).toFixed(2))
+  const stock = buildStock(asset.category, index)
 
   return {
     slug: `${asset.category}-${slugify(asset.file)}`,
@@ -97,6 +109,7 @@ const products = assets.map((asset, index) => {
     description: `${name} de la marca ${brand}.`,
     tags: [asset.category, brand.toLowerCase()],
     brand,
+    stock,
     attributes: buildAttributes(asset.category),
   }
 })
