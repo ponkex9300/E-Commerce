@@ -17,60 +17,60 @@ const categoryLabels = {
 
 const fallbackProducts = [
   {
-    id: 'ball-pro-001',
-    name: 'Training Ball Pro',
+    id: 'fallback-001',
+    name: 'Balon Trionda Adidas',
     category: 'equipment',
-    price: 49.99,
-    image: '/products/ball.svg',
+    price: 95.0,
+    image: '/products/equipment/Adidas-Trionda-Football.jpg',
   },
   {
-    id: 'cleat-speed-002',
-    name: 'Speed Cleats',
+    id: 'fallback-002',
+    name: 'Botines Adidas Copa Pure',
     category: 'footwear',
-    price: 279.99,
-    image: '/products/boots.svg',
+    price: 210.0,
+    image: '/products/footwear/Adidas-Copa-Pure.avif',
   },
   {
-    id: 'cleat-control-003',
-    name: 'Performance Boots',
+    id: 'fallback-003',
+    name: 'Botines Puma Future 9 Ultimate',
     category: 'footwear',
-    price: 249.99,
-    image: '/products/boots.svg',
+    price: 227.0,
+    image: '/products/footwear/Puma-Future-9-Ultimate.jpg',
   },
   {
-    id: 'jersey-away-004',
-    name: 'Away Jersey Pro',
+    id: 'fallback-004',
+    name: 'Camiseta Nike France',
     category: 'apparel',
-    price: 94.99,
-    image: '/products/jersey.svg',
+    price: 75.0,
+    image: '/products/apparel/Nike-France-Shirt.jpg',
   },
   {
-    id: 'gloves-keeper-005',
-    name: 'Keeper Gloves Elite',
+    id: 'fallback-005',
+    name: 'Guantes Puma Ultra Ultimate',
     category: 'equipment',
-    price: 79.99,
-    image: '/products/gloves.svg',
+    price: 112.0,
+    image: '/products/equipment/Puma-Ultra-Ultimate-Gloves.jpg',
   },
   {
-    id: 'cone-kit-006',
-    name: 'Training Cone Kit',
+    id: 'fallback-006',
+    name: 'Conos de entrenamiento',
     category: 'training',
-    price: 34.99,
-    image: '/products/training.svg',
+    price: 45.0,
+    image: '/products/training/Training-Cones.jpg',
   },
   {
-    id: 'vest-pack-007',
-    name: 'Bib Vest Pack',
+    id: 'fallback-007',
+    name: 'Chaleco de entrenamiento',
     category: 'training',
-    price: 29.99,
-    image: '/products/training.svg',
+    price: 53.5,
+    image: '/products/training/Training-Vest.jpg',
   },
   {
-    id: 'sock-pro-008',
-    name: 'Match Socks Pro',
+    id: 'fallback-008',
+    name: 'Medias Lux Grip',
     category: 'apparel',
-    price: 19.99,
-    image: '/products/socks.svg',
+    price: 83.5,
+    image: '/products/apparel/Lux-Grip-Socks.jpg',
   },
 ]
 
@@ -86,28 +86,39 @@ function App() {
   const [activeCategory, setActiveCategory] = useState('all')
   const [isCartOpen, setIsCartOpen] = useState(false)
   const [products, setProducts] = useState(fallbackProducts)
-  const [cart, setCart] = useState({
-    'cleat-speed-002': 1,
-    'cleat-control-003': 1,
-  })
+  const [cart, setCart] = useState({})
 
   useEffect(() => {
     const controller = new AbortController()
 
-    const fetchProducts = async () => {
-      try {
-        const response = await fetch('/api/products', { signal: controller.signal })
-        if (!response.ok) {
-          return
-        }
+    const normalizeProducts = (payload) => {
+      if (Array.isArray(payload)) return payload
+      if (payload && Array.isArray(payload.value)) return payload.value
+      return []
+    }
 
-        const result = await response.json()
-        if (Array.isArray(result) && result.length > 0) {
-          setProducts(result)
+    const fetchProducts = async () => {
+      const endpoints = ['/api/products', 'http://localhost:4000/api/products']
+
+      for (const endpoint of endpoints) {
+        try {
+          const response = await fetch(endpoint, { signal: controller.signal })
+          if (!response.ok) {
+            continue
+          }
+
+          const result = await response.json()
+          const normalized = normalizeProducts(result)
+          if (normalized.length > 0) {
+            setProducts(normalized)
+            return
+          }
+        } catch {
+          // Try the next endpoint.
         }
-      } catch {
-        // Keep fallback data when backend is not running.
       }
+
+      // Keep fallback data when backend is not running.
     }
 
     fetchProducts()

@@ -13,7 +13,14 @@ async function connectPostgres() {
     const initPath = path.join(__dirname, '..', '..', 'db', 'init.sql')
     if (fs.existsSync(initPath)) {
       const sql = fs.readFileSync(initPath, 'utf8')
-      await client.query(sql)
+      const statements = sql
+        .split(/;\s*(?:\r?\n|$)/)
+        .map((statement) => statement.trim())
+        .filter(Boolean)
+
+      for (const statement of statements) {
+        await client.query(statement)
+      }
       console.log('Postgres initialized from init.sql')
     } else {
       console.log('No Postgres init.sql found, skipping DB initialization')

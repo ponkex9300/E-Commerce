@@ -1,71 +1,104 @@
-# E-Commerce de Fútbol
+# Práctica Final: Sistema E-commerce Multitienda
 
-Proyecto base de e-commerce local para productos de fútbol: camisetas, guantes, botines, pelotas y material de entrenamiento.
+Proyecto de e-commerce con arquitectura híbrida SQL + NoSQL para clientes, carritos, preferencias, catálogo y reportes.
 
-## Estructura
+## Levantar el proyecto
 
-```text
-.
-|-- backend/
-|   |-- src/
-|   |   |-- data/products.js
-|   |   |-- routes/products.routes.js
-|   |   `-- server.js
-|   `-- .env.example
-|-- frontend/
-|   `-- src/
-|       |-- App.jsx
-|       `-- index.css
-`-- docker-compose.yml
-```
-
-## Tecnologías
-
-- Frontend: React + Vite
-- Backend: Node.js + Express
-- Base de datos (para conectar después): MongoDB en Docker
-
-## Ejecutar en local
-
-1. Backend
-
-```bash
-cd backend
-copy .env.example .env
-npm run dev
-```
-
-2. Frontend (nueva terminal)
-
-```bash
-cd frontend
-npm run dev
-```
-
-3. MongoDB con Docker
+1. Inicia las bases de datos.
 
 ```bash
 docker compose up -d
 ```
 
-Servicios de Docker:
-- MongoDB: http://localhost:27017
-- Mongo Express: http://localhost:8081
+2. Arranca el backend.
 
-La primera vez que arranca MongoDB, crea la base de datos `football_store` y carga una colección `products` desde `docker/mongo-init.js`.
+```bash
+cd backend
+npm.cmd run dev
+```
 
-## API disponible
+3. Arranca el frontend en otra terminal.
 
-- GET /api/health
-- GET /api/products
-- GET /api/products?category=footwear
+```bash
+cd frontend
+npm.cmd run dev
+```
 
-Categorías actuales:
-- footwear
-- equipment
-- apparel
-- training
+URLs locales:
 
-## Nota sobre MongoDB
+- Backend: http://localhost:4000
+- Frontend: http://localhost:5173
+- Mongo Express: http://localhost:8082
 
-MongoDB ya está inicializada en Docker y conectada al backend. Al arrancar el servidor, se sincroniza el catálogo base desde `backend/src/data/products.js` para mantener la colección `products` lista y completa.
+## Qué comprobar
+
+### Salud del sistema
+
+```bash
+GET /api/health
+```
+
+Debe responder con `status: ok`.
+
+### Módulo relacional
+
+Verifica PostgreSQL con la inicialización en `backend/db/init.sql`.
+
+```bash
+POST /api/customers
+GET /api/customers/:id
+GET /api/customers/:id/full
+```
+
+Qué validar:
+
+- que el cliente se crea con un UUID
+- que el correo queda en PostgreSQL
+- que `encrypted_card` existe y se guarda cifrado
+- que `GET /api/customers/:id/full` junta cliente de PostgreSQL con preferencias y carrito de MongoDB
+
+También puedes revisar el esquema en PostgreSQL y confirmar tablas como `roles`, `customers`, `orders` y `order_items`.
+
+### Módulo NoSQL
+
+```bash
+GET /api/products
+POST /api/products/search
+GET /api/reports/compare-brands
+GET /api/reports/price-summary
+```
+
+Qué validar:
+
+- que los productos tienen campos flexibles en `attributes`
+- que existen arreglos en `tags` y `variants`
+- que la búsqueda acepta operadores como `$gt`, `$lt`, `$and` y `$or`
+- que los reportes comparan marcas y agregan precios
+
+### Integración entre bases
+
+```bash
+POST /api/preferences/:customerId
+POST /api/cart/:customerId
+GET /api/customers/:id/full
+```
+
+Qué validar:
+
+- que `customerId` conecta PostgreSQL con MongoDB
+- que preferencias y carrito se guardan en MongoDB
+- que la vista completa devuelve un documento integrado
+
+## Ejemplo rápido de prueba
+
+1. Crear un cliente con `POST /api/customers`.
+2. Tomar el `id` devuelto.
+3. Crear preferencias con `POST /api/preferences/:customerId`.
+4. Consultar un producto desde `GET /api/products` y usar su `id` real de Mongo para `POST /api/cart/:customerId`.
+5. Confirmar la unión con `GET /api/customers/:id/full`.
+
+## Observaciones
+
+- El backend ejecuta `backend/db/init.sql` al arrancar para mantener PostgreSQL sincronizado.
+- La API de productos usa IDs reales de MongoDB en `id`.
+- El frontend consulta `/api/products` a través del proxy de Vite.

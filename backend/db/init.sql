@@ -14,6 +14,9 @@ CREATE TABLE IF NOT EXISTS customers (
   created_at TIMESTAMPTZ DEFAULT now()
 );
 
+ALTER TABLE customers
+  ADD COLUMN IF NOT EXISTS encrypted_card TEXT;
+
 CREATE TABLE IF NOT EXISTS orders (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   customer_id UUID REFERENCES customers(id) ON DELETE SET NULL,

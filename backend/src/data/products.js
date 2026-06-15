@@ -1,92 +1,104 @@
-const products = [
-  {
-    id: 'ball-pro-001',
-    name: 'Training Ball Pro',
-    category: 'equipment',
-    price: 49.99,
-    image: '/products/ball.svg',
-    description: 'Durable ball for daily training on natural or synthetic grass.',
-    tags: ['ball', 'training'],
-    brand: 'ProSport',
-    attributes: { material: 'PU', size: 5, weight_g: 410 },
-  },
-  {
-    id: 'cleat-speed-002',
-    name: 'Speed Cleats',
-    category: 'footwear',
-    price: 279.99,
-    image: '/products/boots.svg',
-    description: 'Lightweight cleats for acceleration and fast direction changes.',
-    tags: ['cleats', 'speed'],
-    brand: 'FastKick',
-    attributes: { sizes: [40,41,42,43], material: 'synthetic', surface: 'firm' },
-  },
-  {
-    id: 'cleat-control-003',
-    name: 'Performance Boots',
-    category: 'footwear',
-    price: 249.99,
-    image: '/products/boots.svg',
-    description: 'Control-focused boots with match-ready traction outsole.',
-    tags: ['cleats', 'control'],
-    brand: 'ControlMax',
-    attributes: { sizes: [39,40,41,42], material: 'leather', surface: 'soft' },
-  },
-  {
-    id: 'jersey-away-004',
-    name: 'Away Jersey Pro',
-    category: 'apparel',
-    price: 94.99,
-    image: '/products/jersey.svg',
-    description: 'Official jersey with athletic fit and breathable fabric.',
-    tags: ['jersey', 'kit'],
-    brand: 'TeamWear',
-    attributes: { sizes: ['S','M','L','XL'], material: 'polyester', fit: 'athletic' },
-  },
-  {
-    id: 'gloves-keeper-005',
-    name: 'Keeper Gloves Elite',
-    category: 'equipment',
-    price: 79.99,
-    image: '/products/gloves.svg',
-    description: 'Goalkeeper gloves with premium grip in dry or wet conditions.',
-    tags: ['gloves', 'keeper'],
-    brand: 'GripPro',
-    attributes: { sizes: ['S','M','L'], palm: 'latex', weather: ['dry','wet'] },
-  },
-  {
-    id: 'cone-kit-006',
-    name: 'Training Cone Kit',
-    category: 'training',
-    price: 34.99,
-    image: '/products/training.svg',
-    description: 'Cone set for speed and coordination drills.',
-    tags: ['cones','training'],
-    brand: 'DrillMaster',
-    attributes: { pieces: 20, color: ['orange','yellow'] },
-  },
-  {
-    id: 'vest-pack-007',
-    name: 'Bib Vest Pack',
-    category: 'training',
-    price: 29.99,
-    image: '/products/training.svg',
-    description: 'Training bib pack to split teams during sessions.',
-    tags: ['vests','training'],
-    brand: 'DrillMaster',
-    attributes: { pieces: 10, sizes: ['adult'] },
-  },
-  {
-    id: 'sock-pro-008',
-    name: 'Match Socks Pro',
-    category: 'apparel',
-    price: 19.99,
-    image: '/products/socks.svg',
-    description: 'Match socks with light compression and arch support.',
-    tags: ['socks','kit'],
-    brand: 'SockIt',
-    attributes: { sizes: ['S','M','L'], material: 'nylon' },
-  },
+const assets = [
+  { category: 'footwear', file: 'Adidas-Copa-Pure.avif' },
+  { category: 'footwear', file: 'Adidas-F50-Hyperfast.webp' },
+  { category: 'footwear', file: 'Adidas-Predator.jpg' },
+  { category: 'footwear', file: 'Nike-Air-Zoom-Mercurial-Superfly.webp' },
+  { category: 'footwear', file: 'Nike-Tiempo.webp' },
+  { category: 'footwear', file: 'Puma-Future-9-Ultimate.jpg' },
+  { category: 'footwear', file: 'Puma-Ultra-6-Ultimate.jpg' },
+
+  { category: 'training', file: 'Clear-Passage-Nasal-Strips.jpg' },
+  { category: 'training', file: 'Forza-Cohesive-Bandage.webp' },
+  { category: 'training', file: 'Training-Cones.jpg' },
+  { category: 'training', file: 'Training-Vest.jpg' },
+
+  { category: 'equipment', file: 'Adidas-Copa-Pro-Gloves.webp' },
+  { category: 'equipment', file: 'Adidas-Predator-Pro-Gloves.webp' },
+  { category: 'equipment', file: 'Adidas-Tiro-Shin-Guards.jpg' },
+  { category: 'equipment', file: 'Adidas-Trionda-Football.jpg' },
+  { category: 'equipment', file: 'Nike-Mercurial-Shin-Guards.jpg' },
+  { category: 'equipment', file: 'Puma-Future-Ultimate-Gloves.avif' },
+  { category: 'equipment', file: 'Puma-Neymar-Jr-BNA-Shin-Guards.webp' },
+  { category: 'equipment', file: 'Puma-Orbita-Football.webp' },
+  { category: 'equipment', file: 'Puma-Stellar-Football.jpg' },
+  { category: 'equipment', file: 'Puma-Ultra-Ultimate-Gloves.jpg' },
+  { category: 'equipment', file: 'Reusch-Attrakt-Fusion-Gloves.jpg' },
+
+  { category: 'apparel', file: 'Adidas-Germany-Shirt.jpg' },
+  { category: 'apparel', file: 'Adidas-Japan_Shirt.avif' },
+  { category: 'apparel', file: 'Adidas-Mexico-Shirt.jpg' },
+  { category: 'apparel', file: 'High-Performance-Shorts.jpg' },
+  { category: 'apparel', file: 'Lux-Grip-Socks.jpg' },
+  { category: 'apparel', file: 'Marathon-Bolivia-Shirt.webp' },
+  { category: 'apparel', file: 'Nike-Brazil-Shirt.jpg' },
+  { category: 'apparel', file: 'Nike-England-Shirt.webp' },
+  { category: 'apparel', file: 'Nike-France-Shirt.jpg' },
+  { category: 'apparel', file: 'Puma-New-Zealand-Shirt.jpg' },
+  { category: 'apparel', file: 'Puma-Portugal-Shirt.jpg' },
+  { category: 'apparel', file: 'Udiyo-High-Performance-Tube-Socks.avif' },
 ]
+
+const BASE_PRICE = {
+  footwear: 210,
+  equipment: 95,
+  apparel: 75,
+  training: 45,
+}
+
+function getBrand(file) {
+  return file.split('-')[0]
+}
+
+function slugify(value) {
+  return value
+    .toLowerCase()
+    .replace(/\.[^.]+$/, '')
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '')
+}
+
+function toSpanishName(file, category) {
+  const raw = file.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ').trim()
+  const normalized = raw.toLowerCase()
+
+  if (category === 'apparel' && normalized.includes('shirt')) return `Camiseta ${raw.replace(/shirt/gi, '').trim()}`
+  if (category === 'apparel' && normalized.includes('socks')) return `Medias ${raw.replace(/socks?/gi, '').trim()}`
+  if (category === 'apparel' && normalized.includes('shorts')) return `Short ${raw.replace(/shorts/gi, '').trim()}`
+  if (category === 'equipment' && normalized.includes('gloves')) return `Guantes ${raw.replace(/gloves/gi, '').trim()}`
+  if (category === 'equipment' && normalized.includes('shin guards')) return `Canilleras ${raw.replace(/shin guards/gi, '').trim()}`
+  if (category === 'equipment' && normalized.includes('football')) return `Balon ${raw.replace(/football/gi, '').trim()}`
+  if (category === 'training' && normalized.includes('cones')) return 'Conos de entrenamiento'
+  if (category === 'training' && normalized.includes('vest')) return 'Chaleco de entrenamiento'
+  if (category === 'training' && normalized.includes('nasal strips')) return 'Tiras nasales deportivas'
+  if (category === 'training' && normalized.includes('bandage')) return 'Vendaje cohesivo deportivo'
+  if (category === 'footwear') return `Botines ${raw}`
+
+  return raw
+}
+
+function buildAttributes(category) {
+  if (category === 'footwear') return { tallas: [39, 40, 41, 42, 43], tipo: 'fg', material: 'sintetico' }
+  if (category === 'apparel') return { tallas: ['S', 'M', 'L', 'XL'], material: 'polyester' }
+  if (category === 'equipment') return { uso: 'partido', nivel: 'pro' }
+  return { uso: 'entrenamiento' }
+}
+
+const products = assets.map((asset, index) => {
+  const name = toSpanishName(asset.file, asset.category)
+  const brand = getBrand(asset.file)
+  const price = Number((BASE_PRICE[asset.category] + (index % 7) * 8.5).toFixed(2))
+
+  return {
+    slug: `${asset.category}-${slugify(asset.file)}`,
+    name,
+    category: asset.category,
+    price,
+    image: `/products/${asset.category}/${asset.file}`,
+    description: `${name} de la marca ${brand}.`,
+    tags: [asset.category, brand.toLowerCase()],
+    brand,
+    attributes: buildAttributes(asset.category),
+  }
+})
 
 module.exports = products
